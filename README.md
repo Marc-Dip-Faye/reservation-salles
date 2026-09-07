@@ -61,3 +61,25 @@ ETAPE 5
 → Parce que son rôle est seulement de vérifier les données, pas de les enregistrer.
 4. Comment retourner plusieurs erreurs en une seule fois ?
 → En mettant toutes les erreurs dans un tableau, puis en retournant ce tableau.
+
+
+ETAPE 6
+1. Quelle différence existe entre DTO et modèle Eloquent ?
+→ Le DTO transporte les données, tandis que le modèle Eloquent représente une table et communique avec la base de données.
+2. Pourquoi le DTO ne doit-il pas appeler save() ?
+→ Parce que son rôle est seulement de transporter les données, pas de les enregistrer.
+3. À quel moment transforme-t-on les chaînes en dates ?
+→ Lors du traitement des données, généralement dans le DTO ou le Service.
+4. Le DTO doit-il contenir la règle de chevauchement ?
+→ Non. Le chevauchement est une règle métier, donc elle doit être gérée dans le Service.
+
+
+ETAPE 7
+1. Eloquent constitue-t-il déjà un accès aux données ?
+→ Oui. Eloquent permet déjà d’accéder à la base de données.
+2. Pourquoi ajouter un Repository au-dessus d’Eloquent ?
+→ Pour séparer l’accès aux données du reste de l’application.
+3. Cette abstraction est-elle toujours nécessaire ?
+→ Non. Elle est surtout utile dans les projets complexes ou quand on veut pouvoir changer facilement la façon d’accéder aux données.
+4. Quel avantage apporte-t-elle ?
+→ Elle rend le code plus organisé, plus facile à tester et à modifier.

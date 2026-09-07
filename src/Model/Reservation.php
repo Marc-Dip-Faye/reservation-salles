@@ -5,8 +5,7 @@ namespace App\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
-class Reservation extends Model
-{
+class Reservation extends Model {
 	protected $table = 'reservations';
 
 	protected $fillable = [
@@ -25,8 +24,7 @@ class Reservation extends Model
 		'date_fin' => 'datetime',
 	];
 
-	public function salle(): BelongsTo
-	{
+	public function salle(): BelongsTo {
 		return $this->belongsTo(Salle::class);
 	}
 }
