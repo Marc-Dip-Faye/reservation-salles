@@ -41,7 +41,7 @@ Pourquoi convertir les dates en objets ?
 → Pour pouvoir manipuler facilement les dates avec des méthodes PHP.
 
 
-<!-- ETAPE 4
+ETAPE 4
 1. Quelle différence existe entre migration et seeder ?
 → La migration sert à créer ou modifier la structure de la base de données.
 → Le seeder sert à ajouter des données de départ dans la base.
@@ -51,4 +51,13 @@ Pourquoi convertir les dates en objets ?
 → En utilisant une contrainte UNIQUE dans la base de données et en vérifiant aussi les données avant l’insertion.
 
 
-ETAPE 5 -->
+
+ETAPE 5
+1. Pourquoi séparer la validation syntaxique des règles métier ?
+→ Pour séparer les responsabilités et rendre le code plus simple à gérer.
+2. Pourquoi créer une interface de validation ?
+→ Pour définir les règles que tous les validateurs doivent respecter.
+3. Pourquoi le validateur ne doit-il pas enregistrer les données ?
+→ Parce que son rôle est seulement de vérifier les données, pas de les enregistrer.
+4. Comment retourner plusieurs erreurs en une seule fois ?
+→ En mettant toutes les erreurs dans un tableau, puis en retournant ce tableau.
