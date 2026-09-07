@@ -83,3 +83,14 @@ ETAPE 7
 → Non. Elle est surtout utile dans les projets complexes ou quand on veut pouvoir changer facilement la façon d’accéder aux données.
 4. Quel avantage apporte-t-elle ?
 → Elle rend le code plus organisé, plus facile à tester et à modifier.
+
+
+ETAPE 8
+1. Pourquoi ces règles ne sont-elles pas dans le contrôleur ?
+→ Parce que le contrôleur doit seulement recevoir la demande et appeler le service. Les règles métier sont dans le Service.
+2. Pourquoi le service dépend-il d’une interface de Repository ?
+→ Pour que le service ne dépende pas directement d’Eloquent et puisse changer facilement de Repository.
+3. Quelle exception doit être levée en cas de conflit ?
+→ Une exception métier, par exemple ConflitReservationException.
+4. Comment tester le service sans MySQL ?
+→ En utilisant un Repository fictif (mock) qui simule la base de données.
