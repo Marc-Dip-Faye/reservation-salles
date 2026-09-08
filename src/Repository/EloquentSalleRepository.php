@@ -19,16 +19,35 @@ final class EloquentSalleRepository implements SalleRepositoryInterface
 
 	public function enregistrer(CreerSalleDTO $dto): Salle
 	{
-		$salle = new Salle([
+		$salle = new Salle($this->donneesDepuisDTO($dto));
+
+		$salle->save();
+
+		return $salle;
+	}
+
+	public function modifier(int $id, CreerSalleDTO $dto): ?Salle
+	{
+		$salle = $this->trouver($id);
+
+		if ($salle === null) {
+			return null;
+		}
+
+		$salle->fill($this->donneesDepuisDTO($dto));
+		$salle->save();
+
+		return $salle;
+	}
+
+	private function donneesDepuisDTO(CreerSalleDTO $dto): array
+	{
+		return [
 			'nom' => $dto->nom,
 			'batiment' => $dto->batiment,
 			'capacite' => $dto->capacite,
 			'type' => $dto->type,
 			'active' => $dto->active,
-		]);
-
-		$salle->save();
-
-		return $salle;
+		];
 	}
 }

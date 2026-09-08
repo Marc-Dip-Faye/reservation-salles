@@ -13,4 +13,6 @@ interface SalleRepositoryInterface
 	public function trouver(int $id): ?Salle;
 
 	public function enregistrer(CreerSalleDTO $dto): Salle;
+
+	public function modifier(int $id, CreerSalleDTO $dto): ?Salle;
 }
