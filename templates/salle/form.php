@@ -85,8 +85,8 @@ a{color:inherit;text-decoration:none}
 
     <div class="page-head">
       <div>
-        <p class="page-head__eyebrow">Modification</p>
-        <h1>Modifier la salle</h1>
+        <p class="page-head__eyebrow"><?= ($mode ?? 'create') === 'edit' ? 'Modification' : 'Création' ?></p>
+        <h1><?= ($mode ?? 'create') === 'edit' ? 'Modifier la salle' : 'Ajouter une salle' ?></h1>
         <p class="page-head__sub">Les champs marqués d'un <span class="req">*</span> sont obligatoires.</p>
       </div>
       <div class="page-head__actions">
@@ -94,14 +94,24 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
 
-    <!-- Exemple avec erreur (décommenter pour tester) -->
-    <!--
+<?php if (!empty($errors)): ?>
     <div class="alert alert--danger" role="alert">
       Le formulaire contient des erreurs. Veuillez corriger les champs signalés ci-dessous.
     </div>
-    -->
+<?php endif; ?>
 
-    <form class="panel" method="post" action="/salles/1/edit" novalidate>
+<?php
+$isEdit = ($mode ?? 'create') === 'edit';
+$formData = $data ?? [];
+$formData['nom'] = $formData['nom'] ?? ($salle->nom ?? '');
+$formData['batiment'] = $formData['batiment'] ?? ($salle->batiment ?? '');
+$formData['capacite'] = $formData['capacite'] ?? ($salle->capacite ?? '');
+$formData['type'] = $formData['type'] ?? ($salle->type ?? 'cours');
+$formData['active'] = $formData['active'] ?? ($salle->active ?? true);
+$formAction = $isEdit ? '/salles/' . (int) $salle->id . '/edit' : '/salles';
+$types = ['cours', 'informatique', 'laboratoire', 'amphitheatre', 'reunion'];
+?>
+      <form class="panel" method="post" action="<?= $formAction ?>" novalidate>
       <div class="panel__head">
         <div>
           <h2>Caractéristiques de la salle</h2>
@@ -112,34 +122,38 @@ a{color:inherit;text-decoration:none}
       <div class="form-grid">
         <div class="field">
           <label for="nom">Nom <span class="req">*</span></label>
-          <input id="nom" name="nom" type="text" value="Amphi Turing" placeholder="Ex. : Amphi Turing" required>
+            <input id="nom" name="nom" type="text" value="<?= htmlspecialchars((string) $formData['nom'], ENT_QUOTES, 'UTF-8') ?>" placeholder="Ex. : Amphi Turing" required>
         </div>
 
         <div class="field">
           <label for="batiment">Bâtiment <span class="req">*</span></label>
-          <input id="batiment" name="batiment" type="text" value="Bâtiment A" placeholder="Ex. : Bâtiment A" required>
+            <input id="batiment" name="batiment" type="text" value="<?= htmlspecialchars((string) $formData['batiment'], ENT_QUOTES, 'UTF-8') ?>" placeholder="Ex. : Bâtiment A" required>
         </div>
 
         <div class="field">
           <label for="capacite">Capacité <span class="req">*</span></label>
-          <input id="capacite" name="capacite" type="number" min="1" step="1" value="220" placeholder="Ex. : 120" required>
+            <input id="capacite" name="capacite" type="number" min="1" step="1" value="<?= (int) $formData['capacite'] ?>" placeholder="Ex. : 120" required>
         </div>
 
         <div class="field">
           <label for="type">Type <span class="req">*</span></label>
-          <input id="type" name="type" type="text" value="amphitheatre" placeholder="Ex. : amphitheatre, laboratoire" required>
+            <select id="type" name="type" required>
+<?php foreach ($types as $type): ?>
+              <option value="<?= $type ?>" <?= $formData['type'] === $type ? 'selected' : '' ?>><?= htmlspecialchars(ucfirst($type), ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
+            </select>
         </div>
 
         <div class="field field--full">
           <label class="check">
-            <input type="checkbox" name="active" value="1" checked>
+              <input type="checkbox" name="active" value="1" <?= $formData['active'] ? 'checked' : '' ?>>
             <span>Salle active (ouverte à la réservation)</span>
           </label>
         </div>
       </div>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn--primary">Enregistrer les modifications</button>
+        <button type="submit" class="btn btn--primary"><?= $isEdit ? 'Enregistrer les modifications' : 'Créer la salle' ?></button>
         <a class="btn btn--ghost" href="/salles">Annuler</a>
       </div>
     </form>

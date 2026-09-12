@@ -30,7 +30,11 @@ final class ReservationController
 
     public function show(int $id): array
     {
-        return ['view' => 'reservation/show', 'reservation' => $this->reservationRepository->trouver($id)];
+        $reservation = $this->reservationRepository->trouver($id);
+
+        return $reservation === null
+            ? ['view' => 'error/404', 'message' => 'Réservation introuvable.']
+            : ['view' => 'reservation/show', 'reservation' => $reservation];
     }
 
     public function create(): array

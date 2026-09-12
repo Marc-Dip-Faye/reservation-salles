@@ -89,7 +89,7 @@ tbody tr:hover{background:#fbf7ef}
       <div>
         <p class="page-head__eyebrow">Planning</p>
         <h1>Réservations</h1>
-        <p class="page-head__sub">4 réservation(s)</p>
+          <p class="page-head__sub"><?= count($reservations ?? []) ?> réservation(s)</p>
       </div>
       <div class="page-head__actions">
         <a class="btn btn--primary" href="/reservations/create">+ Créer une réservation</a>
@@ -102,11 +102,18 @@ tbody tr:hover{background:#fbf7ef}
           <thead>
             <tr><th>Salle</th><th>Responsable</th><th>Motif</th><th>Début</th><th>Fin</th><th>Statut</th><th class="th-right">Actions</th></tr>
           </thead>
-          <tbody>
-            <tr><td class="cell-strong">Amphi Turing</td><td>Prof. Marc Vasseur</td><td><span class="cell-clamp">Cours de littérature L3</span></td><td>27/03/2025 14:00</td><td>27/03/2025 18:00</td><td><span class="badge badge--ok">Confirmée</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/reservations/1">Voir</a></div></td></tr>
-            <tr><td class="cell-strong">Salle Info Linux</td><td>Dr. Sophie Laurent</td><td><span class="cell-clamp">TP Algorithmique</span></td><td>28/03/2025 08:30</td><td>28/03/2025 12:30</td><td><span class="badge badge--warn">En attente</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/reservations/2">Voir</a></div></td></tr>
-            <tr><td class="cell-strong">Laboratoire Bio-Santé</td><td>Pr. Antoine Girard</td><td><span class="cell-clamp">Biochimie appliquée M1</span></td><td>29/03/2025 10:00</td><td>29/03/2025 13:00</td><td><span class="badge badge--ok">Confirmée</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/reservations/3">Voir</a></div></td></tr>
-            <tr><td class="cell-strong">Salle de Séminaire</td><td>Bureau des Étudiants</td><td><span class="cell-clamp">Réunion BDE</span></td><td>30/03/2025 18:00</td><td>30/03/2025 22:00</td><td><span class="badge badge--danger">Annulée</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/reservations/4">Voir</a></div></td></tr>
+            <tbody>
+<?php foreach ($reservations ?? [] as $reservation): ?>
+              <tr>
+                <td class="cell-strong"><?= htmlspecialchars($reservation->salle?->nom ?? 'Salle inconnue', ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars($reservation->responsable, ENT_QUOTES, 'UTF-8') ?></td>
+                <td><span class="cell-clamp"><?= htmlspecialchars($reservation->motif, ENT_QUOTES, 'UTF-8') ?></span></td>
+                <td><?= $reservation->date_debut->format('d/m/Y H:i') ?></td>
+                <td><?= $reservation->date_fin->format('d/m/Y H:i') ?></td>
+                <td><span class="badge <?= $reservation->statut === 'annulee' ? 'badge--danger' : 'badge--ok' ?>"><?= $reservation->statut === 'annulee' ? 'Annulée' : 'Confirmée' ?></span></td>
+                <td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/reservations/<?= (int) $reservation->id ?>">Voir</a></div></td>
+              </tr>
+<?php endforeach; ?>
           </tbody>
         </table>
       </div>

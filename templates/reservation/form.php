@@ -92,13 +92,13 @@ a{color:inherit;text-decoration:none}
       </div>
     </div>
 
-    <!-- Exemple avec erreur (décommenter pour tester) -->
-    <!--
+<?php if (!empty($errors)): ?>
     <div class="alert alert--danger" role="alert">
       Le formulaire contient des erreurs. Veuillez corriger les champs signalés ci-dessous.
     </div>
-    -->
+<?php endif; ?>
 
+<?php $formData = $data ?? []; ?>
     <form class="panel" method="post" action="/reservations" novalidate>
       <div class="panel__head">
         <div>
@@ -112,38 +112,35 @@ a{color:inherit;text-decoration:none}
           <label for="salle_id">Salle <span class="req">*</span></label>
           <select id="salle_id" name="salle_id" required>
             <option value="">— Sélectionner une salle —</option>
-            <option value="1" selected>Amphi Turing (Bâtiment A)</option>
-            <option value="2">Salle Info Linux (Bâtiment B)</option>
-            <option value="3">Laboratoire Bio-Santé (Bâtiment C)</option>
-            <option value="4">Salle de Séminaire (Bâtiment A)</option>
-            <option value="5">Espace Réunion Décanat (Bâtiment D)</option>
-            <option value="6">Ancienne Salle d'Archives (Bâtiment D)</option>
+<?php foreach ($salles ?? [] as $salle): ?>
+              <option value="<?= (int) $salle->id ?>" <?= (string) ($formData['salle_id'] ?? '') === (string) $salle->id ? 'selected' : '' ?>><?= htmlspecialchars($salle->nom . ' (' . $salle->batiment . ')', ENT_QUOTES, 'UTF-8') ?></option>
+<?php endforeach; ?>
           </select>
         </div>
 
         <div class="field">
           <label for="responsable">Responsable <span class="req">*</span></label>
-          <input id="responsable" name="responsable" type="text" value="Prof. Marc Vasseur" placeholder="Ex. : Prof. Marc Vasseur" required>
+              <input id="responsable" name="responsable" type="text" value="<?= htmlspecialchars((string) ($formData['responsable'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="Ex. : Prof. Marc Vasseur" required>
         </div>
 
         <div class="field">
           <label for="email">Email <span class="req">*</span></label>
-          <input id="email" name="email" type="email" value="m.vasseur@universite.fr" placeholder="ex. : m.vasseur@universite.fr" required>
+              <input id="email" name="email" type="email" value="<?= htmlspecialchars((string) ($formData['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="ex. : m.vasseur@universite.fr" required>
         </div>
 
         <div class="field">
           <label for="motif">Motif <span class="req">*</span></label>
-          <input id="motif" name="motif" type="text" value="Cours de littérature L3" placeholder="Ex. : Cours de littérature L3" required>
+              <input id="motif" name="motif" type="text" value="<?= htmlspecialchars((string) ($formData['motif'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" placeholder="Ex. : Cours de littérature L3" required>
         </div>
 
         <div class="field">
           <label for="date_debut">Date de début <span class="req">*</span></label>
-          <input id="date_debut" name="date_debut" type="datetime-local" value="2025-03-27T14:00" required>
+              <input id="date_debut" name="date_debut" type="datetime-local" value="<?= htmlspecialchars((string) ($formData['date_debut'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" required>
         </div>
 
         <div class="field">
           <label for="date_fin">Date de fin <span class="req">*</span></label>
-          <input id="date_fin" name="date_fin" type="datetime-local" value="2025-03-27T18:00" required>
+              <input id="date_fin" name="date_fin" type="datetime-local" value="<?= htmlspecialchars((string) ($formData['date_fin'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" required>
         </div>
       </div>
 

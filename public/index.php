@@ -1,13 +1,33 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/Database.php';
 
+use App\Controller\ReservationController;
+use App\Controller\SalleController;
+use App\Repository\EloquentReservationRepository;
+use App\Repository\EloquentSalleRepository;
+use App\Service\AnnulerReservationService;
+use App\Service\CreerReservationService;
+use App\Validation\ReservationValidator;
+use App\Validation\SalleValidator;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
 $dispatcher = simpleDispatcher(function (RouteCollector $routes): void {
-	(require __DIR__ . '/../routes/Web.php')($routes);
+	$salleRepository = new EloquentSalleRepository();
+	$reservationRepository = new EloquentReservationRepository();
+	$salleController = new SalleController($salleRepository, new SalleValidator());
+	$reservationController = new ReservationController(
+		$reservationRepository,
+		$salleRepository,
+		new ReservationValidator(),
+		new CreerReservationService($salleRepository, $reservationRepository),
+		new AnnulerReservationService($reservationRepository)
+	);
+
+	(require __DIR__ . '/../routes/Web.php')($routes, $salleController, $reservationController);
 });
 
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
@@ -29,11 +49,21 @@ switch ($route[0]) {
 
 [$handler, $variables] = [$route[1], $route[2]];
 $result = $handler(...array_values($variables));
+
+if (isset($result['redirect'])) {
+	header('Location: ' . $result['redirect'], true, 303);
+	return;
+}
+
 render($result);
 
 function render(array $result): void
 {
 	$view = $result['view'] ?? null;
+	if ($view === 'error/404') {
+		http_response_code(404);
+	}
+
 	$viewFiles = [
 		'dashboard/dashboard' => 'layout/base.php',
 		'salle/index' => 'salle/index.php',

@@ -80,8 +80,8 @@ a{color:inherit;text-decoration:none}
     <div class="page-head">
       <div>
         <p class="page-head__eyebrow">Fiche réservation</p>
-        <h1>Réservation #1</h1>
-        <p class="page-head__sub">Amphi Turing</p>
+          <h1>Réservation #<?= (int) $reservation->id ?></h1>
+          <p class="page-head__sub"><?= htmlspecialchars($reservation->salle?->nom ?? 'Salle inconnue', ENT_QUOTES, 'UTF-8') ?></p>
       </div>
       <div class="page-head__actions">
         <a class="btn btn--ghost" href="/reservations">Retour à la liste</a>
@@ -94,39 +94,41 @@ a{color:inherit;text-decoration:none}
           <h2>Informations de la réservation</h2>
           <p>Détails du créneau et du demandeur</p>
         </div>
-        <span class="badge badge--ok">Confirmée</span>
+          <span class="badge <?= $reservation->statut === 'annulee' ? 'badge--danger' : 'badge--ok' ?>"><?= $reservation->statut === 'annulee' ? 'Annulée' : 'Confirmée' ?></span>
       </div>
 
       <div class="detail">
         <div class="detail__item">
           <p class="detail__label">Salle</p>
-          <p class="detail__value">Amphi Turing</p>
+            <p class="detail__value"><?= htmlspecialchars($reservation->salle?->nom ?? 'Salle inconnue', ENT_QUOTES, 'UTF-8') ?></p>
         </div>
         <div class="detail__item">
           <p class="detail__label">Responsable</p>
-          <p class="detail__value">Prof. Marc Vasseur</p>
+            <p class="detail__value"><?= htmlspecialchars($reservation->responsable, ENT_QUOTES, 'UTF-8') ?></p>
         </div>
         <div class="detail__item">
           <p class="detail__label">Email</p>
-          <p class="detail__value"><a href="mailto:m.vasseur@universite.fr" style="color:var(--accent-2);text-decoration:underline">m.vasseur@universite.fr</a></p>
+            <p class="detail__value"><a href="mailto:<?= htmlspecialchars($reservation->email, ENT_QUOTES, 'UTF-8') ?>" style="color:var(--accent-2);text-decoration:underline"><?= htmlspecialchars($reservation->email, ENT_QUOTES, 'UTF-8') ?></a></p>
         </div>
         <div class="detail__item">
           <p class="detail__label">Date de début</p>
-          <p class="detail__value">27/03/2025 14:00</p>
+            <p class="detail__value"><?= $reservation->date_debut->format('d/m/Y H:i') ?></p>
         </div>
         <div class="detail__item">
           <p class="detail__label">Date de fin</p>
-          <p class="detail__value">27/03/2025 18:00</p>
+            <p class="detail__value"><?= $reservation->date_fin->format('d/m/Y H:i') ?></p>
         </div>
         <div class="detail__item" style="grid-column:1/-1">
           <p class="detail__label">Motif</p>
-          <p class="detail__value" style="font-weight:500">Cours de littérature comparée L3</p>
+            <p class="detail__value" style="font-weight:500"><?= htmlspecialchars($reservation->motif, ENT_QUOTES, 'UTF-8') ?></p>
         </div>
       </div>
 
-      <form class="form-actions" method="post" action="/reservations/1/cancel" onsubmit="return confirm('Confirmer l\'annulation de cette réservation ?');">
-        <button type="submit" class="btn btn--danger">Annuler la réservation</button>
-      </form>
+<?php if ($reservation->statut !== 'annulee'): ?>
+        <form class="form-actions" method="post" action="/reservations/<?= (int) $reservation->id ?>/cancel" onsubmit="return confirm('Confirmer l\'annulation de cette réservation ?');">
+          <button type="submit" class="btn btn--danger">Annuler la réservation</button>
+        </form>
+<?php endif; ?>
     </section>
 
   </div>

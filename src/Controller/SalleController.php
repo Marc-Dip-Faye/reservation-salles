@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\DTO\Builder\CreerSalleDTOBuilder;
 use App\Repository\SalleRepositoryInterface;
 use App\Validation\SalleValidator;
-use DateTimeInterface;
 
 final class SalleController
 {
@@ -22,12 +21,16 @@ final class SalleController
 
     public function show(int $id): array
     {
-        return ['view' => 'salle/show', 'salle' => $this->salleRepository->trouver($id)];
+        $salle = $this->salleRepository->trouver($id);
+
+        return $salle === null
+            ? ['view' => 'error/404', 'message' => 'Salle introuvable.']
+            : ['view' => 'salle/show', 'salle' => $salle];
     }
 
     public function create(): array
     {
-        return ['view' => 'salle/create', 'data' => [], 'errors' => []];
+        return ['view' => 'salle/form', 'mode' => 'create', 'data' => [], 'errors' => []];
     }
 
     public function store(?array $request = null): array
@@ -36,7 +39,7 @@ final class SalleController
         $result = $this->validator->validate($data);
 
         if (!$result->isValid()) {
-            return ['view' => 'salle/create', 'data' => $data, 'errors' => $result->errors()];
+            return ['view' => 'salle/form', 'mode' => 'create', 'data' => $data, 'errors' => $result->errors()];
         }
 
         $dto = (new CreerSalleDTOBuilder())
@@ -54,7 +57,11 @@ final class SalleController
 
     public function edit(int $id): array
     {
-        return ['view' => 'salle/edit', 'salle' => $this->salleRepository->trouver($id), 'errors' => []];
+        $salle = $this->salleRepository->trouver($id);
+
+        return $salle === null
+            ? ['view' => 'error/404', 'message' => 'Salle introuvable.']
+            : ['view' => 'salle/form', 'mode' => 'edit', 'salle' => $salle, 'errors' => []];
     }
 
     public function update(int $id, ?array $request = null): array
@@ -63,7 +70,7 @@ final class SalleController
         $result = $this->validator->validate($data);
 
         if (!$result->isValid()) {
-            return ['view' => 'salle/edit', 'salle' => $this->salleRepository->trouver($id), 'data' => $data, 'errors' => $result->errors()];
+            return ['view' => 'salle/form', 'mode' => 'edit', 'salle' => $this->salleRepository->trouver($id), 'data' => $data, 'errors' => $result->errors()];
         }
 
         $accepted = $result->accepted();
