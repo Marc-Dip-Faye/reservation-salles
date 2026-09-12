@@ -6,6 +6,12 @@ IMAGE_NAME="${DOCKERHUB_USERNAME:?Définissez DOCKERHUB_USERNAME avant de lancer
 START_TAG="${1:-v0.0.0}"
 DRY_RUN="${DRY_RUN:-0}"
 ORIGINAL_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
+BUILD_FILE="$(mktemp)"
+
+cleanup() {
+        rm -f "$BUILD_FILE"
+        git checkout --quiet "$ORIGINAL_REF"
+}
 
 if [[ -n "$(git status --porcelain)" ]]; then
         echo "Le dépôt doit être propre avant de parcourir les tags Git." >&2
@@ -29,11 +35,8 @@ if [[ "${#VERSION_TAGS[@]}" -eq 0 ]]; then
         exit 1
 fi
 
-restore_ref() {
-        git checkout --quiet "$ORIGINAL_REF"
-}
-
-trap restore_ref EXIT
+cp docker/Dockerfile "$BUILD_FILE"
+trap cleanup EXIT
 
 for VERSION_TAG in "${VERSION_TAGS[@]}"; do
         echo "Construction et publication de ${IMAGE_NAME}:${VERSION_TAG}"
@@ -41,7 +44,7 @@ for VERSION_TAG in "${VERSION_TAGS[@]}"; do
         if [[ "$DRY_RUN" == "1" ]]; then
                 continue
         fi
-        docker build -f docker/Dockerfile -t "${IMAGE_NAME}:${VERSION_TAG}" .
+        docker build -f "$BUILD_FILE" -t "${IMAGE_NAME}:${VERSION_TAG}" .
         docker push "${IMAGE_NAME}:${VERSION_TAG}"
 done
 
