@@ -68,7 +68,7 @@ final class ReservationController
             return ['view' => 'reservation/create', 'salles' => $this->salleRepository->lister(), 'data' => $data, 'errors' => ['reservation' => $exception->getMessage()]];
         }
 
-        return ['redirect' => '/reservations/' . $reservation->getKey()];
+        return ['redirect' => '/reservations'];
     }
 
     public function cancel(int $id): array

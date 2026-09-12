@@ -52,7 +52,7 @@ final class SalleController
 
         $salle = $this->salleRepository->enregistrer($dto);
 
-        return ['redirect' => '/salles/' . $salle->getKey()];
+        return ['redirect' => '/salles'];
     }
 
     public function edit(int $id): array
