@@ -30,7 +30,11 @@ final class ReservationController
 
     public function show(int $id): array
     {
-        return ['view' => 'reservation/show', 'reservation' => $this->reservationRepository->trouver($id)];
+        $reservation = $this->reservationRepository->trouver($id);
+
+        return $reservation === null
+            ? ['view' => 'error/404', 'message' => 'Réservation introuvable.']
+            : ['view' => 'reservation/show', 'reservation' => $reservation];
     }
 
     public function create(): array
@@ -64,7 +68,7 @@ final class ReservationController
             return ['view' => 'reservation/create', 'salles' => $this->salleRepository->lister(), 'data' => $data, 'errors' => ['reservation' => $exception->getMessage()]];
         }
 
-        return ['redirect' => '/reservations/' . $reservation->getKey()];
+        return ['redirect' => '/reservations'];
     }
 
     public function cancel(int $id): array

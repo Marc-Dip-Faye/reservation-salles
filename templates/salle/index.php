@@ -88,7 +88,7 @@ tbody tr:hover{background:#fbf7ef}
       <div>
         <p class="page-head__eyebrow">Patrimoine pédagogique</p>
         <h1>Salles</h1>
-        <p class="page-head__sub">6 salles répertoriées</p>
+          <p class="page-head__sub"><?= count($salles ?? []) ?> salle(s) répertoriée(s)</p>
       </div>
       <div class="page-head__actions">
         <a class="btn btn--primary" href="/salles/create">+ Ajouter une salle</a>
@@ -101,13 +101,17 @@ tbody tr:hover{background:#fbf7ef}
           <thead>
             <tr><th>Nom</th><th>Bâtiment</th><th>Capacité</th><th>Type</th><th>Statut</th><th class="th-right">Actions</th></tr>
           </thead>
-          <tbody>
-            <tr><td class="cell-strong">Amphi Turing</td><td>Bâtiment A</td><td>220 places</td><td><span class="tag">Amphithéâtre</span></td><td><span class="badge badge--ok">Active</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/1">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/1/edit">Modifier</a></div></td></tr>
-            <tr><td class="cell-strong">Salle Info Linux</td><td>Bâtiment B</td><td>25 places</td><td><span class="tag">Informatique</span></td><td><span class="badge badge--ok">Active</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/2">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/2/edit">Modifier</a></div></td></tr>
-            <tr><td class="cell-strong">Laboratoire Bio-Santé</td><td>Bâtiment C</td><td>24 places</td><td><span class="tag">Laboratoire</span></td><td><span class="badge badge--ok">Active</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/3">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/3/edit">Modifier</a></div></td></tr>
-            <tr><td class="cell-strong">Salle de Séminaire</td><td>Bâtiment A</td><td>28 places</td><td><span class="tag">Cours</span></td><td><span class="badge badge--ok">Active</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/4">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/4/edit">Modifier</a></div></td></tr>
-            <tr><td class="cell-strong">Espace Réunion Décanat</td><td>Bâtiment D</td><td>18 places</td><td><span class="tag">Réunion</span></td><td><span class="badge badge--neutral">Inactive</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/5">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/5/edit">Modifier</a></div></td></tr>
-            <tr><td class="cell-strong">Ancienne Salle d'Archives</td><td>Bâtiment D</td><td>10 places</td><td><span class="tag">Stockage</span></td><td><span class="badge badge--neutral">Inactive</span></td><td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/6">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/6/edit">Modifier</a></div></td></tr>
+            <tbody>
+<?php foreach ($salles ?? [] as $salle): ?>
+              <tr>
+                <td class="cell-strong"><?= htmlspecialchars($salle->nom, ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= htmlspecialchars($salle->batiment, ENT_QUOTES, 'UTF-8') ?></td>
+                <td><?= (int) $salle->capacite ?> places</td>
+                <td><span class="tag"><?= htmlspecialchars(ucfirst($salle->type), ENT_QUOTES, 'UTF-8') ?></span></td>
+                <td><span class="badge <?= $salle->active ? 'badge--ok' : 'badge--neutral' ?>"><?= $salle->active ? 'Active' : 'Inactive' ?></span></td>
+                <td><div class="row-actions"><a class="btn btn--sm btn--ghost" href="/salles/<?= (int) $salle->id ?>">Voir</a><a class="btn btn--sm btn--ghost" href="/salles/<?= (int) $salle->id ?>/edit">Modifier</a></div></td>
+              </tr>
+<?php endforeach; ?>
           </tbody>
         </table>
       </div>

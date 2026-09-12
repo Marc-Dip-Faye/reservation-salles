@@ -1,28 +1,47 @@
-# services:
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: reservation-salles:latest
+    container_name: reservation-salles-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: reservation_salles
+      DB_USERNAME: reservation_user
+      DB_PASSWORD: reservation_password
+      DB_CHARSET: utf8mb4
+      DB_COLLATION: utf8mb4_unicode_ci
+      DB_PREFIX: ""
+    command: >-
+      sh -c "php database/Migrate.php && php database/Seed.php &&
+      php -S 0.0.0.0:8000 -t public"
 
-#   app:
-#     image: reservation-salles:latest
-#     container_name: reservation-salles-app
-#     ports:
-#       - "8000:8000"
-#     depends_on:
-#       - mysql
-#     env_file:
-#       - .env
+  mysql:
+    image: mysql:8.0
+    container_name: reservation-salles-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: reservation_salles
+      MYSQL_USER: reservation_user
+      MYSQL_PASSWORD: reservation_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - mysql_data:/var/lib/mysql
 
-#   mysql:
-#     image: mysql:8.0
-#     container_name: reservation-salles-mysql
-#     restart: unless-stopped
-#     environment:
-#       MYSQL_DATABASE: reservation_salles
-#       MYSQL_USER: reservation_user
-#       MYSQL_PASSWORD: reservation_password
-#       MYSQL_ROOT_PASSWORD: root_password
-#     ports:
-#       - "3306:3306"
-#     volumes:
-#       - mysql_data:/var/lib/mysql
-
-# volumes:
-#   mysql_data:
+volumes:
+  mysql_data:
