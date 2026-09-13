@@ -5,21 +5,26 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Dotenv\Dotenv;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-$dotenv = Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
+// Charger le fichier .env s'il existe (pour le développement local)
+// Mais ne pas planter s'il n'existe pas (pour Railway)
+$envPath = dirname(__DIR__);
+if (file_exists($envPath . '/.env')) {
+    $dotenv = Dotenv::createImmutable($envPath);
+    $dotenv->safeLoad();
+}
 
 $capsule = new Capsule();
 
 $capsule->addConnection([
-    'driver'    => $_ENV['DB_CONNECTION'],
-    'host'      => $_ENV['DB_HOST'],
-    'port'      => (int) $_ENV['DB_PORT'],
-    'database'  => $_ENV['DB_DATABASE'],
-    'username'  => $_ENV['DB_USERNAME'],
-    'password'  => $_ENV['DB_PASSWORD'],
-    'charset'   => $_ENV['DB_CHARSET'],
-    'collation' => $_ENV['DB_COLLATION'],
-    'prefix'    => $_ENV['DB_PREFIX'],
+    'driver'    => getenv('DB_CONNECTION'),
+    'host'      => getenv('DB_HOST'),
+    'port'      => (int) getenv('DB_PORT'),
+    'database'  => getenv('DB_DATABASE'),
+    'username'  => getenv('DB_USERNAME'),
+    'password'  => getenv('DB_PASSWORD'),
+    'charset'   => getenv('DB_CHARSET') ?: 'utf8mb4',
+    'collation' => getenv('DB_COLLATION') ?: 'utf8mb4_unicode_ci',
+    'prefix'    => getenv('DB_PREFIX') ?: '',
 ]);
 
 $capsule->setAsGlobal();
